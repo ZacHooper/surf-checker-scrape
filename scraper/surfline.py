@@ -106,7 +106,10 @@ def get_surf_location_from_id(spot_id: str) -> str:
 
 def get_swell_data(url: str) -> pd.DataFrame:
     # Query API
-    response = requests.get(url)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
+    }
+    response = requests.get(url, headers=headers)
     print(response.status_code)
     print(response.text)
     print(response.headers)
