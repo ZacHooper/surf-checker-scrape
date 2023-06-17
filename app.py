@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup as bs4
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 import re
 from scraper.surfline import (
@@ -11,6 +11,7 @@ from scraper.surfline import (
     get_swell_data,
 )
 import pandas as pd
+import json
 
 tz = pytz.timezone("Australia/Sydney")
 
@@ -52,15 +53,24 @@ def scrape_surfline(url: str) -> dict:
     }
 
 
+def lambda_handler(event, context):
+    url = "https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=607776017a3e100333600795&units[swellHeight]=M&units[waveHeight]=M"
+    report = get_swell_data(url)
+    return {"statusCode": 200, "body": json.dumps(report)}
+
+
 if __name__ == "__main__":
     # torquay_url = "https://www.surfline.com/surf-report/torquay-surf-beach/607776017a3e100333600795"
     # report = scrape_surfline(torquay_url)
     # print(report)
-    url = "https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=607776017a3e100333600795"
-
-    previous_data = pd.read_csv("torquay_surf_data.csv", index_col=0)
+    url = "https://services.surfline.com/kbyg/spots/forecasts/wave?spotId=607776017a3e100333600795&units[swellHeight]=M&units[waveHeight]=M"
+    # previous_data = pd.read_csv("torquay_surf_data.csv", index_col=0)
     data = get_swell_data(url)
 
-    merged = pd.concat([previous_data, data], axis=0).reset_index(drop=True)
+    # merged = pd.concat([previous_data, data], axis=0).reset_index(drop=True)
 
-    merged.to_csv("torquay_surf_data.csv", index_label="index")
+    # merged.to_csv("torquay_surf_data.csv", index_label="index")
+
+    # convert epoch to today
+    data["timestamp"] = pd.to_datetime(data["timestamp"], unit="s")
+    data["timestamp"] = data["timestamp"].dt.tz_localize("Australia/Sydney")

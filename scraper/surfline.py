@@ -7,6 +7,7 @@ import re
 import json
 import pandas as pd
 import requests
+from urllib.parse import urlparse, parse_qs
 
 
 def get_surf_conditions_card(soup: BeautifulSoup) -> BeautifulSoup:
@@ -109,9 +110,10 @@ def get_swell_data(url: str) -> pd.DataFrame:
     wave_data = json.loads(response.text)
     wave_df = pd.DataFrame(wave_data["data"]["wave"])
 
+    parsed_url = urlparse(url)
+    query_strings = parse_qs(parsed_url.query)
     # Get spot id
-    get_id = lambda url: url.split("/")[6].replace("wave?spotId=", "")
-    wave_df["surf_location"] = get_surf_location_from_id(get_id(url))
+    wave_df["surf_location"] = get_surf_location_from_id(query_strings.get("spotId")[0])
 
     # Get general surf information
     wave_df["min_height"] = wave_df.surf.apply(lambda x: x.get("min"))

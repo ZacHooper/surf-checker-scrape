@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  python3.9
+  Surf Checker
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 900
+    MemorySize: 256
+
+Parameters:
+  #This should be copy pasted to all the SAM App you are making 
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues:
+      - test
+      - prod
+
+Resources:
+  SurfCheckerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      FunctionName: !Sub ${Environment}-surf-checker-function
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: python3.10-v1
