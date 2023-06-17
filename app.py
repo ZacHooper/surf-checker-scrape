@@ -3,7 +3,7 @@ import pandas as pd
 import json
 
 
-def lambda_handler(event, context):
+def lambda_handler(event: dict, context: dict):
     # Allow specific spot ids to be provided in the event
     # Eg to get the swell data for Torquay Surf Beach: {"spot_id": "607776017a3e100333600795"}
     spot_id = event.get("spot_id", "607776017a3e100333600795")
@@ -16,4 +16,4 @@ def lambda_handler(event, context):
 
 
 if __name__ == "__main__":
-    print(lambda_handler(None, None))
+    print(lambda_handler({}, {}))

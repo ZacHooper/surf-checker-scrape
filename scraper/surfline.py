@@ -100,8 +100,12 @@ def get_swells(soup: BeautifulSoup) -> list[dict[str, str]]:
 def get_surf_location_from_id(spot_id: str) -> str:
     spots = {
         "607776017a3e100333600795": "Torquay Surf Beach",
+        "607776017a3e100333600796": "Jan Juc",
     }
-    return spots[spot_id]
+    spot = spots.get(spot_id, "Unknown")
+    if spot == "Unknown":
+        print(f"ERROR: Unknown spot id provided - {spot_id}")
+    return spots.get(spot_id, "Unknown")
 
 
 def get_swell_data(url: str) -> pd.DataFrame:
