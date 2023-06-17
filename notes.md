@@ -26,6 +26,7 @@ Daily blurb about surf (Actual blurb will be in other table)
 1. A database of photos and their associated conditions at the time and in the lead up (ie how those conditions came about)
 2. If conditions look good, some data to help us predict when they could be good again
 3. Overtime we may get photos of different breaks with similar conditions, which could help us determine which break we should go to based on the conditions
+4. Build a collection of photos of breaks that don't have a surf report and see how they look in different conditions of nearby breaks.
 
 ## What data do we need
 
