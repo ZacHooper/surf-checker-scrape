@@ -107,6 +107,9 @@ def get_surf_location_from_id(spot_id: str) -> str:
 def get_swell_data(url: str) -> pd.DataFrame:
     # Query API
     response = requests.get(url)
+    print(response.status_code)
+    print(response.text)
+    print(response.headers)
     wave_data = json.loads(response.text)
     wave_df = pd.DataFrame(wave_data["data"]["wave"])
 
