@@ -14,11 +14,11 @@ def lambda_handler(event: dict, context: dict):
     body = json.loads(event["body"])
     # Allow specific spot ids to be provided in the event
     # Eg to get the swell data for Torquay Surf Beach: {"spot_id": "607776017a3e100333600795"}
-    spot_id = event.get("spot_id", "607776017a3e100333600795")
-    longitude = event.get("longitude", None)
-    latitude = event.get("latitude", None)
+    spot_id = body.get("spot_id", "607776017a3e100333600795")
+    longitude = body.get("longitude", None)
+    latitude = body.get("latitude", None)
 
-    image_encoded = event.get("image", None)
+    image_encoded = body.get("image", None)
     if image_encoded is None:
         return {"statusCode": 400, "body": "No image provided"}
 
