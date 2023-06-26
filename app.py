@@ -1,5 +1,6 @@
 import base64
 import json
+from datetime import datetime
 
 import pandas as pd
 import boto3
@@ -22,8 +23,13 @@ def lambda_handler(event: dict, context: dict):
 
     image = base64.b64decode(image_encoded)
 
+    now = datetime.utcnow()
+    now_str = now.strftime("%Y%m%d_%H%M%S")
+
     # Save the image to S3
-    s3.put_object(Bucket="surf-pics", Key=f"{longitude}_{latitude}.jpeg", Body=image)
+    s3.put_object(
+        Bucket="surf-pics", Key=f"{now_str}_{longitude}_{latitude}.jpeg", Body=image
+    )
 
     url = f"https://services.surfline.com/kbyg/spots/forecasts/wave?spotId={spot_id}&units[swellHeight]=M&units[waveHeight]=M"
     report = get_swell_data(url)
