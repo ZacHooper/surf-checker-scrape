@@ -27,6 +27,18 @@ Resources:
       Architectures:
         - x86_64
       FunctionName: !Sub ${Environment}-surf-checker-function
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Sid: S3Access
+              Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:GetObject
+                - s3:ListBucket
+              Resource: 
+                - arn:aws:s3:::surf-pics/*
+                - arn:aws:s3:::surf-pics
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: .

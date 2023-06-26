@@ -109,7 +109,7 @@ def get_surf_location_from_id(spot_id: str) -> str:
     spot = spots.get(spot_id, "Unknown")
     if spot == "Unknown":
         print(f"ERROR: Unknown spot id provided - {spot_id}")
-    return spots.get(spot_id, "Unknown")
+    return spot
 
 
 def get_swell_data(url: str) -> pd.DataFrame:
