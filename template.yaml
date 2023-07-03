@@ -39,6 +39,15 @@ Resources:
               Resource: 
                 - arn:aws:s3:::surf-pics/*
                 - arn:aws:s3:::surf-pics
+        # allow perms to get secrets
+        - Version: '2012-10-17'
+          Statement:
+            - Sid: SecretsAccess
+              Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: 
+                - arn:aws:secretsmanager:ap-southeast-2:373083822301:secret:prod/surf-checker/*
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: .

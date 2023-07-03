@@ -60,13 +60,11 @@ def lambda_handler(event: dict, context: dict):
     # Save the data to the database
     engine = create_engine(conn_str)
     with engine.begin() as conn:
-        conn.execute(
-            text(
-                """--sql
-                INSERT INTO reports (longitude, latitude, photo_key, waves, wind, tide, weather, report)
-                VALUES (:longitude, :latitude, :photo_key, :waves, :wind, :tide, :weather, :report)
-                """
-            ),
+        qry = """--sql
+        INSERT INTO reports (longitude, latitude, photo_key, waves, wind, tide, weather, report)
+        VALUES (:longitude, :latitude, :photo_key, :waves, :wind, :tide, :weather, :report)
+        """
+        params = (
             {
                 "longitude": 151.209900,
                 "latitude": -33.865143,
@@ -78,6 +76,7 @@ def lambda_handler(event: dict, context: dict):
                 "report": conditions_data.to_json(orient="records"),
             },
         )
+        conn.execute(text(qry), params)
     return {"statusCode": 200, "body": "Surf report saved"}
 
 
