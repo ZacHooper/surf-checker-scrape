@@ -82,4 +82,4 @@ def lambda_handler(event: dict, context: dict):
 
 
 if __name__ == "__main__":
-    
+    lambda_handler({"body": json.dumps({"image": "test"})}, {})
