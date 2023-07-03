@@ -13,6 +13,7 @@ from scraper.surfline import (
     get_tide_data,
     get_weather_data,
     get_conditions_data,
+    get_surf_location_from_id,
 )
 
 s3 = boto3.client("s3")
@@ -42,12 +43,24 @@ def lambda_handler(event: dict, context: dict):
         Bucket="surf-pics", Key=f"{now_str}_{longitude}_{latitude}.jpeg", Body=image
     )
 
-    # Get the data from Surfline
-    wind_data = get_wind_data(spot_id)
-    wave_data = get_wave_data(spot_id)
-    tide_data = get_tide_data(spot_id)
-    weather_data = get_weather_data(spot_id)
-    conditions_data = get_conditions_data(spot_id)
+    spots = [
+        "607776017a3e100333600795",  # Torquay Surf Beach
+        "5842041f4e65fad6a7708c0b",  # Jan Juc
+        "5842041f4e65fad6a7708c0c",  # 13th Beach
+        "584204204e65fad6a77099c7",  # Bells Beach
+    ]
+    wind_data = pd.DataFrame()
+    wave_data = pd.DataFrame()
+    tide_data = pd.DataFrame()
+    weather_data = pd.DataFrame()
+    conditions_data = pd.DataFrame()
+    for spot_id in spots:
+        # Get the data from Surfline
+        wind_data = pd.concat([wind_data, get_wind_data(spot_id)])
+        wave_data = pd.concat([wave_data, get_wave_data(spot_id)])
+        tide_data = pd.concat([tide_data, get_tide_data(spot_id)])
+        weather_data = pd.concat([weather_data, get_weather_data(spot_id)])
+        conditions_data = pd.concat([conditions_data, get_conditions_data(spot_id)])
 
     # Get secret from AWS Secrets Manager
     secrets_client = boto3.client("secretsmanager", region_name="ap-southeast-2")
@@ -80,4 +93,45 @@ def lambda_handler(event: dict, context: dict):
 
 
 if __name__ == "__main__":
-    lambda_handler({"body": json.dumps({"image": "test"})}, {})
+    # lambda_handler({"body": json.dumps({"image": "test"})}, {})
+
+    spots = [
+        "607776017a3e100333600795",  # Torquay Surf Beach
+        "5842041f4e65fad6a7708c0b",  # Jan Juc
+        "5842041f4e65fad6a7708c0c",  # 13th Beach
+        "584204204e65fad6a77099c7",  # Bells Beach
+    ]
+    wind_data = pd.DataFrame()
+    wave_data = pd.DataFrame()
+    tide_data = pd.DataFrame()
+    weather_data = pd.DataFrame()
+    conditions_data = pd.DataFrame()
+    for spot_id in spots:
+        # Get the data from Surfline
+        wind_data = pd.concat([wind_data, get_wind_data(spot_id)])
+        wave_data = pd.concat([wave_data, get_wave_data(spot_id)])
+        tide_data = pd.concat([tide_data, get_tide_data(spot_id)])
+        weather_data = pd.concat([weather_data, get_weather_data(spot_id)])
+        conditions_data = pd.concat([conditions_data, get_conditions_data(spot_id)])
+
+    all_data = (
+        pd.merge(
+            wind_data,
+            wave_data,
+            on=["timestamp", "surf_location"],
+            suffixes=("_wind", "_wave"),
+        )
+        .merge(tide_data, on=["timestamp", "surf_location"], suffixes=("", "_tide"))
+        .merge(
+            weather_data, on=["timestamp", "surf_location"], suffixes=("", "_weather")
+        )
+        .merge(
+            conditions_data,
+            on=["timestamp", "surf_location"],
+            how="left",
+            suffixes=("", "_conditions"),
+        )
+    )
+    all_data["surf_location_name"] = all_data["surf_location"].apply(
+        lambda x: get_surf_location_from_id(x)
+    )

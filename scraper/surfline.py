@@ -109,6 +109,7 @@ def get_conditions_data(spot_id: str) -> pd.DataFrame:
     response = query(f"{base_url}/conditions", {"spotId": spot_id})
     conditions_data = json.loads(response.text)
     conditions_df = pd.DataFrame(conditions_data["data"]["conditions"])
+    conditions_df["surf_location"] = spot_id
     conditions_df["am_observation"] = conditions_df["am"].apply(
         lambda x: x.get("observation")
     )
