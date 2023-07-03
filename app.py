@@ -43,7 +43,6 @@ def lambda_handler(event: dict, context: dict):
     )
 
     # Get the data from Surfline
-    spot_id = "5842041f4e65fad6a7708c0b"
     wind_data = get_wind_data(spot_id)
     wave_data = get_wave_data(spot_id)
     tide_data = get_tide_data(spot_id)
@@ -66,8 +65,8 @@ def lambda_handler(event: dict, context: dict):
         """
         params = (
             {
-                "longitude": 151.209900,
-                "latitude": -33.865143,
+                "longitude": longitude,
+                "latitude": latitude,
                 "photo_key": key,
                 "waves": wave_data.to_json(orient="records"),
                 "wind": wind_data.to_json(orient="records"),
