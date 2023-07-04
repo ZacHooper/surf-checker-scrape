@@ -12,7 +12,7 @@ on:
 
 env:
   SAM_TEMPLATE: template.yaml
-  STACK_NAME: prod-surf-checker
+  STACK_NAME: test-surf-checker
   REGION: ap-southeast-2
 
 jobs:
